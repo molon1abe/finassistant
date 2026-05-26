@@ -5,10 +5,13 @@ setup_logging()
 
 
 def main():
-    file_to_read = "./rus_test.pdf"
+    file_to_read = ""
     processor = PdfProcessor()
-    pdf_data = processor.read_pdf(file_to_read)
-    print(pdf_data)
+    processor.open_file(file_to_read)
+    print(processor.read_page(0))
+    batch = processor.read_batch(100)
+    print(batch)
+    processor.close_file()
 
 
 if __name__ == "__main__":
