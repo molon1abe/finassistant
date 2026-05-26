@@ -12,3 +12,8 @@ dependencies = [
     "openai>=2.38.0",
     "requests>=2.34.2",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+]
