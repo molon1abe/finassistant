@@ -1,3 +1,4 @@
-from .pdf import PdfProcessor
+from .pdf import load_pdf
+from .csv import load_csv
 
-__all__ = ["PdfProcessor"]
+__all__ = ["load_pdf", "load_csv"]
