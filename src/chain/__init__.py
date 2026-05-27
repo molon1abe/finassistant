@@ -1,3 +1,3 @@
-from .tokenizer import chunk_by_token, vectorise_docs
+from .tokenizer import chunk_by_token, vectorise_chroma
 
-__all__ = ["chunk_by_token", "vectorise_docs"]
+__all__ = ["chunk_by_token", "vectorise_chroma"]
