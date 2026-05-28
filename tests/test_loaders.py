@@ -1,5 +1,4 @@
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 from langchain_core.documents import Document
@@ -8,6 +7,7 @@ from ingest import load_csv, load_pdf
 
 FIXTURES_DIR = Path(__file__).parent / "data"
 CSV_FILE = FIXTURES_DIR / "bank_statement.csv"
+PDF_FILE = FIXTURES_DIR / "bank_statement.pdf"
 
 
 class TestLoadCsv:
@@ -35,29 +35,21 @@ class TestLoadCsv:
 
 class TestLoadPdf:
     def test_returns_list_of_documents(self):
-        mock_docs = [
-            Document(
-                page_content="bank statement text",
-                metadata={"source": "test.pdf", "page": 0},
-            )
-        ]
-        with patch("ingest.pdf.PyMuPDFLoader") as mock_loader:
-            mock_loader.return_value.load.return_value = mock_docs
-            result = load_pdf("test.pdf")
+        result = load_pdf(str(PDF_FILE))
         assert isinstance(result, list)
         assert all(isinstance(d, Document) for d in result)
 
     def test_returns_one_document_per_page(self):
-        mock_docs = [
-            Document(page_content="page 1", metadata={"source": "test.pdf", "page": 0}),
-            Document(page_content="page 2", metadata={"source": "test.pdf", "page": 1}),
-        ]
-        with patch("ingest.pdf.PyMuPDFLoader") as mock_loader:
-            mock_loader.return_value.load.return_value = mock_docs
-            result = load_pdf("test.pdf")
+        result = load_pdf(str(PDF_FILE))
         assert len(result) == 2
-        assert result[0].page_content == "page 1"
-        assert result[1].metadata["page"] == 1
+
+    def test_documents_have_content(self):
+        result = load_pdf(str(PDF_FILE))
+        assert all(d.page_content for d in result)
+
+    def test_metadata_has_source(self):
+        result = load_pdf(str(PDF_FILE))
+        assert all("source" in d.metadata for d in result)
 
     def test_file_not_found(self):
         with pytest.raises(Exception):

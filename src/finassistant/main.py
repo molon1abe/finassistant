@@ -1,21 +1,58 @@
 import structlog
-from finassistant.core.logging import setup_logging
-from ingest import load_pdf, load_csv
-
+from finassistant.core import setup_logging, Settings, CloudModelConfig
+from ingest import load_pdf
+from chain import (
+    chunk_by_token,
+    chunk_by_char,
+    build_local_embeddings,
+    build_store,
+    load_store,
+    build_retriever,
+    build_qa_chain,
+    ask,
+    build_cloud_embeddings,
+    build_cloud_llm,
+    build_local_llm,
+    store_exists,
+)
 
 setup_logging()
 logger = structlog.get_logger()
 
 
 def main():
-    pdf_file_to_read = "./raycast_1.pdf"
-    csv_file_to_read = "./tests/data/bank_statement.csv"
-    pdf_content = load_pdf(pdf_file_to_read)
-    csv_content = load_csv(csv_file_to_read)
-    logger.debug(f"Content loaded from {pdf_file_to_read} file:\n{pdf_content}")
-    logger.info("Loaded pdf file", pdf_file=pdf_file_to_read)
-    logger.debug(f"Content loaded from {csv_file_to_read} file:\n{csv_content}")
-    logger.info("Loaded csv file", csv_file=csv_file_to_read)
+    settings = Settings()
+    setup_logging(settings.log_level)
+    docs = load_pdf(settings.source_file)
+
+    # pick based on model backend
+    if isinstance(settings.model, CloudModelConfig):
+        embeddings = build_cloud_embeddings(
+            settings.model.model_name, settings.model.openai_api_key
+        )
+        llm = build_cloud_llm(settings.model.model_name, settings.model.openai_api_key)
+        chunks = chunk_by_token(docs)
+    else:
+        embeddings = build_local_embeddings(settings.model.model_name)
+        llm = build_local_llm(settings.model.model_name, settings.model.base_url)
+        chunks = chunk_by_char(docs)
+
+    # store init
+    if store_exists(settings.db_path):
+        store = load_store(
+            embeddings, collection_name="statements", path=settings.db_path
+        )
+    else:
+        chunks = chunk_by_char(docs)
+        store = build_store(
+            chunks, embeddings, collection_name="statements", path=settings.db_path
+        )
+
+    # retrieval + QA
+    retriever = build_retriever(store)
+    chain = build_qa_chain(retriever, llm)
+    answer = ask(chain, "What did I spend on groceries?")
+    print(f"{settings.model} model answer: {answer}")
 
 
 if __name__ == "__main__":
