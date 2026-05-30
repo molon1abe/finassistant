@@ -46,3 +46,14 @@ def load_store(
 
 def store_exists(store_path: str) -> bool:
     return os.path.exists(store_path)
+
+
+def doc_exists(store: VectorStore, file_id: str) -> bool:
+    results = store.get(where={"file_id": file_id})
+    return len(results["ids"]) > 0
+
+
+def add_documents(store: VectorStore, docs: list[Document]) -> None:
+    if not docs:
+        raise ValueError("Cannot add empty document list to store")
+    store.add_documents(documents=docs)

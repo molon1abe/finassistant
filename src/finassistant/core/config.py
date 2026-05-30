@@ -12,6 +12,7 @@ class CloudModelConfig(BaseModel):
 class LocalModelConfig(BaseModel):
     type: Literal["local"] = "local"
     model_name: str = "mistral"
+    embed_model: str = "nomic-embed-text"
     base_url: str = "http://localhost:11434"
 
 
@@ -20,9 +21,24 @@ ModelConfig = Annotated[
 ]
 
 
+class CliModelConfig(BaseModel):
+    type: Literal["cli"] = "cli"
+
+
+class WebModeConfig(BaseModel):
+    type: Literal["web"] = "web"
+    base_url: str = "http://localhost:7860"
+
+
+InterfaceConfig = Annotated[
+    Union[CliModelConfig, WebModeConfig], Field(discriminator="type")
+]
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
     model: ModelConfig = CloudModelConfig(openai_api_key="")
+    interface_mode: InterfaceConfig = CliModelConfig()
     source_file: str = "tests/data/bank_statement.pdf"
     db_path: str = "db"
     log_level: str = "INFO"
