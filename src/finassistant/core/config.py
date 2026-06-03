@@ -11,7 +11,7 @@ class CloudModelConfig(BaseModel):
 
 class LocalModelConfig(BaseModel):
     type: Literal["local"] = "local"
-    model_name: str = "mistral"
+    model_name: str = "aya-expanse:8b"
     embed_model: str = "nomic-embed-text"
     base_url: str = "http://localhost:11434"
 

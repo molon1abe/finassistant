@@ -55,6 +55,26 @@ def status(ctx: typer.Context):
     typer.echo(f"Store path: {settings.db_path}")
 
 
+@app.command()
+def peek(
+    ctx: typer.Context,
+    n: int = typer.Option(5, "--n", help="Number of chunks to show"),
+):
+    """Print stored chunks to verify translation and vectorization."""
+    store = ctx.obj["store"]
+    results = store.get()
+    ids = results["ids"]
+    documents = results["documents"]
+    if not ids:
+        typer.echo("Store is empty.")
+        return
+    typer.echo(f"Showing {min(n, len(ids))} of {len(ids)} chunks:\n")
+    for i, (chunk_id, content) in enumerate(zip(ids[:n], documents[:n])):
+        typer.echo(f"[{i + 1}] id={chunk_id}")
+        typer.echo(content[:300])
+        typer.echo("---")
+
+
 def main():
     app()
 

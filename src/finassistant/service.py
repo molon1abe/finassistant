@@ -4,7 +4,7 @@ from langchain_core.runnables import Runnable
 from langchain_core.language_models import BaseChatModel
 from langchain_core.embeddings import Embeddings
 from finassistant.core.config import Settings, CloudModelConfig
-from ingest import load_pdf, load_csv, file_uuid
+from ingest import load_pdf, load_csv, load_sber_pdf, file_uuid
 from chain import (
     chunk_by_token,
     chunk_by_char,
@@ -32,13 +32,21 @@ def add_document(settings: Settings, store: VectorStore, file_path: str):
     if doc_exists(store, file_uuid(file_path)):
         logger.info("Document already ingested, skipping", path=file_path)
         return
-    docs = load_pdf(file_path) if file_path.endswith(".pdf") else load_csv(file_path)
+    if file_path.endswith(".pdf"):
+        docs = load_sber_pdf(file_path)
+        if not docs:
+            docs = load_pdf(file_path)
+    else:
+        docs = load_csv(file_path)
+    logger.info("Loaded", path=file_path, docs=len(docs))
     chunks = (
         chunk_by_token(docs)
         if isinstance(settings.model, CloudModelConfig)
         else chunk_by_char(docs)
     )
+    logger.info("Chunked", chunks=len(chunks))
     add_documents(store, chunks)
+    logger.info("Ingested", path=file_path, chunks=len(chunks))
 
 
 def init_model(settings: Settings) -> BaseChatModel:
