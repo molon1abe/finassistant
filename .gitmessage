@@ -1,0 +1,6 @@
+# <type>(<scope>): <short description>  (50 chars max)
+#
+# Body: explain WHY, not what (wrap at 72 chars)
+#
+# Types:  feat | fix | chore | refactor | docs | test | perf
+# Scopes: ingest | chain | api | embed | deps

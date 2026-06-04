@@ -1,0 +1,23 @@
+date,description,amount,balance,type
+2024-01-01,Opening Balance,,5000.00,
+2024-01-02,Salary Deposit,3500.00,8500.00,credit
+2024-01-03,Netflix Subscription,-15.99,8484.01,debit
+2024-01-04,Grocery Store Lidl,-87.45,8396.56,debit
+2024-01-05,ATM Withdrawal,-200.00,8196.56,debit
+2024-01-07,Electric Bill Payment,-120.00,8076.56,debit
+2024-01-08,Coffee Shop,-4.50,8072.06,debit
+2024-01-09,Online Transfer to John,-500.00,7572.06,debit
+2024-01-10,Pharmacy,-23.80,7548.26,debit
+2024-01-12,Restaurant,-65.00,7483.26,debit
+2024-01-14,Gym Membership,-40.00,7443.26,debit
+2024-01-15,Spotify,-9.99,7433.27,debit
+2024-01-16,Gas Station,-55.00,7378.27,debit
+2024-01-18,Amazon Purchase,-134.99,7243.28,debit
+2024-01-20,Freelance Payment,800.00,8043.28,credit
+2024-01-22,Internet Bill,-49.99,7993.29,debit
+2024-01-23,Grocery Store Lidl,-102.30,7890.99,debit
+2024-01-25,Medical Insurance,-220.00,7670.99,debit
+2024-01-27,Coffee Shop,-4.50,7666.49,debit
+2024-01-28,Taxi,-18.00,7648.49,debit
+2024-01-30,Rent Payment,-1500.00,6148.49,debit
+2024-01-31,Bank Fee,-5.00,6143.49,debit
