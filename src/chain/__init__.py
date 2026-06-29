@@ -1,6 +1,6 @@
 from .chunker import chunk_by_char, chunk_by_token
 from .embedder import build_cloud_embeddings, build_local_embeddings
-from .qa import ask, build_qa_chain
+from .qa import ask, ask_stream, build_qa_chain
 from .retriever import build_retriever
 from .store import (
     add_documents,
@@ -25,6 +25,7 @@ __all__ = [
     "build_retriever",
     "build_qa_chain",
     "ask",
+    "ask_stream",
     "build_cloud_llm",
     "build_local_llm",
     "store_exists",

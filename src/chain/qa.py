@@ -1,3 +1,5 @@
+from collections.abc import AsyncIterator
+
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.language_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
@@ -61,3 +63,15 @@ def ask(
         {"question": question},
         config={"configurable": {"session_id": session_id}},
     )
+
+
+async def ask_stream(
+    chain: RunnableWithMessageHistory,
+    question: str,
+    session_id: str = _DEFAULT_SESSION,
+) -> AsyncIterator[str]:
+    async for chunk in chain.astream(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}},
+    ):
+        yield chunk

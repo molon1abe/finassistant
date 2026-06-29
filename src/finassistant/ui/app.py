@@ -7,7 +7,7 @@ from finassistant.service import (
     init_model,
     init_store,
 )
-from chain import ask
+from chain import ask_stream
 
 
 class FinAssistant:
@@ -25,10 +25,14 @@ class FinAssistant:
         add_document(self.settings, self.store, file_path)
         return f"Ingested: {file_path}"
 
-    def ask(self, question: str) -> str:
+    async def ask(self, question: str):
         if not question:
-            return "No question provided."
-        return ask(self.chain, question)
+            yield "No question provided."
+            return
+        full = ""
+        async for chunk in ask_stream(self.chain, question):
+            full += chunk
+            yield full
 
     def status(self) -> str:
         results = self.store.get()
@@ -67,7 +71,7 @@ def build_ui() -> gr.Blocks:
 
 
 def main():
-    build_ui().launch()
+    build_ui().launch(max_threads=4)
 
 
 if __name__ == "__main__":

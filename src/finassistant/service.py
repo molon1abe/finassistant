@@ -53,7 +53,12 @@ def init_model(settings: Settings) -> BaseChatModel:
     if isinstance(settings.model, CloudModelConfig):
         llm = build_cloud_llm(settings.model.model_name, settings.model.openai_api_key)
     else:
-        llm = build_local_llm(settings.model.model_name, settings.model.base_url)
+        llm = build_local_llm(
+            settings.model.model_name,
+            settings.model.base_url,
+            settings.model.num_ctx,
+            settings.model.num_predict,
+        )
     return llm
 
 

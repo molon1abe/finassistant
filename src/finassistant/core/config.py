@@ -11,9 +11,11 @@ class CloudModelConfig(BaseModel):
 
 class LocalModelConfig(BaseModel):
     type: Literal["local"] = "local"
-    model_name: str = "aya-expanse:8b"
+    model_name: str = "qwen2.5:3b"
     embed_model: str = "nomic-embed-text"
     base_url: str = "http://localhost:11434"
+    num_ctx: int = 2048
+    num_predict: int = 512
 
 
 ModelConfig = Annotated[
